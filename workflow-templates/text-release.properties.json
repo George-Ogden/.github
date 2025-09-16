@@ -1,5 +1,7 @@
 {
   "name": "Text Release",
-  "description": "Tag versions using verssion.txt and create GitHub release.",
-  "iconName": "octicon tag"
+  "description": "Tag versions using version.txt and create GitHub release.",
+  "iconName": "octicon tag",
+  "filePatterns": ["version.txt"],
+  "categories": ["deployment"]
 }

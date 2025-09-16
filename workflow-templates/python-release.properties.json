@@ -1,5 +1,7 @@
 {
   "name": "Python Release",
   "description": "Tag versions using pyproject.toml and create GitHub release.",
-  "iconName": "octicon tag"
+  "iconName": "octicon tag",
+  "filePatterns": ["pyproject.toml"],
+  "categories": ["deployment", "Python"]
 }
