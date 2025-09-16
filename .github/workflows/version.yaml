@@ -1,0 +1,77 @@
+name: Sync Version from Actions
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  sync-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Clone actions
+        run: |
+          git clone https://github.com/George-Ogden/actions.git /tmp/external-repo
+          cd /tmp/external-repo
+          cp version.txt /tmp/new-version.txt
+
+      - name: Compare versions
+        id: compare
+        run: |
+          CURRENT_VERSION=$(cat version.txt)
+          NEW_VERSION=$(cat /tmp/new-version.txt)
+
+          echo "Current version: '$CURRENT_VERSION'"
+          echo "New version: '$NEW_VERSION'"
+
+          BRANCH_NAME="update-version-$NEW_VERSION"
+
+          if [ "$CURRENT_VERSION" != "$NEW_VERSION" ] && ! ( git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME" ); then
+            echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+            echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create pull request branch and setup Git identity
+        if: steps.compare.outputs.update_needed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
+
+      - name: Update version file
+        if: steps.compare.outputs.update_needed == 'true'
+        run: |
+          cp /tmp/new-version.txt version.txt
+          NEW_VERSION=$(cat version.txt)
+
+          find workflow-templates -name \*.yaml -exec sed -i "s/@.*$/@v$NEW_VERSION/"  {} \;
+
+          git add version.txt
+          git commit -am "Automated version change"
+
+      - name: Push changes
+        if: steps.compare.outputs.update_needed == 'true'
+        run: |
+          git push origin "$BRANCH_NAME"
+
+      - name: Create Pull Request
+        if: steps.compare.outputs.update_needed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --title "Automated Version Sync" --body "Update version to ${{ steps.compare.outputs.new_version }}" --head "$BRANCH_NAME" --base "master"
