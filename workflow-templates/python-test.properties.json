@@ -1,5 +1,6 @@
 {
   "name": "Python Test",
   "description": "Run Python test suite.",
-  "iconName": "octicon beaker"
+  "iconName": "octicon beaker",
+  "categories": ["testing", "Python"]
 }
