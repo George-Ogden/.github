@@ -1,0 +1,4 @@
+{
+  "name": "Pre Commit Lint",
+  "description": "Run pre-commit hooks to lint all files."
+}
