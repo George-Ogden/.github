@@ -1,4 +1,5 @@
 {
   "name": "Pre Commit Lint",
-  "description": "Run pre-commit hooks to lint all files."
+  "description": "Run pre-commit hooks to lint all files.",
+  "filePatterns": [".pre-commit-config.yaml", ".pre-commit-config.yml"]
 }
