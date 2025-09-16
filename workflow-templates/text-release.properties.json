@@ -1,5 +1,5 @@
 {
   "name": "Text Release",
   "description": "Tag versions using verssion.txt and create GitHub release.",
-  "icon": "octicon tag"
+  "iconName": "octicon tag"
 }

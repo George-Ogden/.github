@@ -1,5 +1,5 @@
 {
   "name": "Python Test",
   "description": "Run Python test suite.",
-  "icon": "octicon beaker"
+  "iconName": "octicon beaker"
 }
