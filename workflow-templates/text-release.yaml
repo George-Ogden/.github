@@ -11,4 +11,4 @@ permissions:
 
 jobs:
   release:
-    uses: George-Ogden/actions/.github/workflows/text-release.yaml@v3.1.2
+    uses: George-Ogden/actions/.github/workflows/text-release.yaml@v3.1.3
